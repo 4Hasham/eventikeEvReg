@@ -1,0 +1,63 @@
+<p id="warning" *ngIf="flag == true">Start time must be smaller than end time.</p>
+<div id="main">
+    <table>
+        <!-- <tr>
+            <td>
+                
+            </td>
+            <td>
+                Starting Time
+            </td>
+            <td>
+                Ending Time
+            </td>
+        </tr> -->
+        <tr>
+            <td>
+                <label>{{ id }}</label>
+            </td>
+            <td>
+                <mat-form-field appearance="fill">
+                <mat-label>Choose start date</mat-label>
+                <input name="START_DATE" [value]="date" (dateInput)="saveDate($event)" matInput [matDatepickerFilter]="disableDate" [matDatepicker]="picker" readonly="readonly">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </td>
+            <td>
+                <mat-form-field class="time" appearance="fill">
+                <mat-label>Hours</mat-label>
+                <mat-select name="sTimeH" [ngModel]="sTimeH" (ngModelChange)="setNewTime($event, 1)">
+                    <mat-option [value]="s" *ngFor="let s of hours">{{ s }}</mat-option>
+                </mat-select>
+                </mat-form-field>
+                <mat-form-field class="time" appearance="fill">
+                <mat-label>Minutes</mat-label>
+                <mat-select name="sTimeM" [(ngModel)]="sTimeM" (ngModelChange)="setNewTime($event, 2)">
+                    <mat-option [value]="s" *ngFor="let s of mins">{{ s }}</mat-option>
+                </mat-select>
+                </mat-form-field>
+                <br>
+            </td>
+            <td>
+                <mat-form-field class="time" appearance="fill">
+                <mat-label>Hours</mat-label>
+                <mat-select name="eTimeH" [ngModel]="eTimeH" (ngModelChange)="setNewTime($event, 3)">
+                    <mat-option [value]="s" *ngFor="let s of hours">{{ s }}</mat-option>
+                </mat-select>
+                </mat-form-field>
+                <mat-form-field class="time" appearance="fill">
+                <mat-label>Minutes</mat-label>
+                <mat-select name="eTimeM" [ngModel]="eTimeM" (ngModelChange)="setNewTime($event, 4)">
+                    <mat-option [value]="s" *ngFor="let s of mins">{{ s }}</mat-option>
+                </mat-select>
+                </mat-form-field>
+                <br>
+            </td>
+            <td>
+                <!-- <button mat-flat-button color="warn">Delete</button> -->
+                <a *ngIf="!dis" color="warn" href="javascript:"><mat-icon aria-hidden="false" (click)="delete()" aria-label="delete">delete</mat-icon></a>
+            </td>
+        </tr>
+    </table>
+</div>    

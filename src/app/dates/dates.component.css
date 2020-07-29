@@ -1,0 +1,16 @@
+#main {
+    width: 100%;
+}
+
+.time {
+    width: 5vw;
+}
+
+table th {
+    text-decoration: none;
+    text-align: left;
+}
+
+#warning {
+    color: red;
+}
