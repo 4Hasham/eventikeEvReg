@@ -3,7 +3,11 @@
 }
 
 #nav {
-    width: 60%;
+    width: 70%;
+}
+
+h3 {
+    text-decoration: underline;
 }
 
 form {
@@ -34,4 +38,8 @@ table th {
 
 #success {
     color: green;
+}
+
+#options {
+    float: right;
 }

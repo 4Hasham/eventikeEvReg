@@ -1,0 +1,28 @@
+<p class="warning" *ngIf="flag[0]">Please enter event name.</p>
+<p class="warning" *ngIf="flag[1]">Please choose a suitable name for event.</p>
+<br>
+<mat-form-field>
+    <mat-label>Enter Event Name</mat-label>
+    <input matInput name="ev_name" [(ngModel)]="name">
+</mat-form-field>
+<br><br>
+<h3>Description</h3>
+<quill-editor></quill-editor>
+<br><br>
+  <h3>Event Type</h3>
+  <br>
+  <mat-radio-group [(ngModel)]="type">
+    <table>
+      <tr>
+        <td>
+          <mat-radio-button value="free">Free</mat-radio-button>
+        </td>
+        <td>
+
+        </td>
+        <td>
+          <mat-radio-button value="paid">Paid</mat-radio-button>
+        </td>
+      </tr>
+    </table>
+  </mat-radio-group>

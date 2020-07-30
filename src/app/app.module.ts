@@ -13,14 +13,19 @@ import { MatDatepickerModule } from '@angular/material/datepicker'
 import { MatNativeDateModule } from '@angular/material/core';
 import { HttpClientModule } from '@angular/common/http'
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
 import { DatesComponent } from './dates/dates.component';
 import { MatIconModule } from '@angular/material/icon';
-import {MatTabsModule} from '@angular/material/tabs'; 
+import { MatTabsModule } from '@angular/material/tabs'; 
+import { MatExpansionModule } from '@angular/material/expansion';
+import { DetailsComponent } from './details/details.component';
+import { QuillModule } from 'ngx-quill';
 
 @NgModule({
   declarations: [
     AppComponent,
     DatesComponent,
+    DetailsComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,8 +41,11 @@ import {MatTabsModule} from '@angular/material/tabs';
     MatDatepickerModule,
     HttpClientModule,
     MatCheckboxModule,
+    MatRadioModule,
     MatIconModule,
-    MatTabsModule
+    MatTabsModule,
+    MatExpansionModule,
+    QuillModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

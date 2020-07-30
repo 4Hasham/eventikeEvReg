@@ -1,98 +1,63 @@
 <div id="content">
   <mat-tab-group id="nav">
     <mat-tab label="* Summary">
-      <br>
-      <h1>Event Timing</h1>
-
-      <p>Events can last for days.</p>
-
-      <br>
-      <h2>Select Date and Time</h2>
-      <!-- <mat-checkbox name="check" [(ngModel)]="flags[3]" (change)="changeIntervals()">Separate time for each day?</mat-checkbox> -->
-      <div id="messages">
-        <p id="warning" *ngIf="flags[0] == true">Make sure you fill in all the fields.</p>
-        <!-- <p id="warning" *ngIf="flags[1] == true">Starting date must be before the ending date.</p>
-        <p id="warning" *ngIf="flags[2] == true">Starting time must be before the ending time.</p> -->
-        <p id="success" *ngIf="success">Success.</p>
-      </div>
-      <br>
+      <br><br>
       <form (submit)="check()" class="sign-form">
-        <div>
-          <app-dates *ngFor="let d of dates; index as i" [id]="i+1" [dis]="verifyFirst(i)" [initial]="lastDate(i)" [dates]="datesV" (dat)="pushDateV($event)" (valid)="peek($event)" (updat)="updateData($event)" (del)="delete(i)">No dates entered.</app-dates>
+      <!-- Event Description -->
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title><h2>Event Information</h2></mat-panel-title>
+          </mat-expansion-panel-header>
+          <app-details (valid)="checkDesc($event)"></app-details>
+          <br><br>
+        </mat-expansion-panel>
+        
+        <!-- Event Dates -->
+
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title><h2>Event Dates</h2></mat-panel-title>
+          </mat-expansion-panel-header>
+          <!-- date content -->
+          <p>Events can last for days.</p>
           <br>
-          <div>
-            <button mat-flat-button (click)="pushDate($event)" color="primary">Add Date</button>
+          <h3>Select Date and Time</h3>
+          <div id="messages">
+            <p id="warning" *ngIf="flags[0] == true">Make sure you fill in all the fields.</p>
+            <p id="success" *ngIf="success">Success.</p>
           </div>
-        </div>
-        <!-- <table *ngIf="!flags[3]">
-          <tr>
-              <td>
-                <mat-form-field appearance="fill">
-                  <mat-label>Choose start date</mat-label>
-                  <input name="START_DATE" (dateInput)="saveDate(2, $event)" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker" readonly="readonly">
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-datepicker #picker disabled="false"></mat-datepicker>
-                </mat-form-field>
-              </td>
-              <td>
-                <mat-form-field appearance="fill">
-                  <mat-label>Choose end date</mat-label>
-                  <input (dateInput)="saveDate(1, $event)" name="END_DATE" matInput [matDatepickerFilter]="myFilter_" [matDatepicker]="picker_" readonly="readonly">
-                  <mat-datepicker-toggle matSuffix [for]="picker_"></mat-datepicker-toggle>
-                  <mat-datepicker #picker_ disabled="false"></mat-datepicker>
-                </mat-form-field>
-              </td>
-          </tr>
-          <tr>
-              <td>Starting Time:</td>
-              <td>Ending Time:</td>
-          </tr>
-          <tr>
-            <td>
+          <br>
+            <div>
+              <app-dates *ngFor="let d of dates; index as i" [id]="i+1" [dis]="verifyFirst(i)" [initial]="lastDate(i)" [dates]="datesV" (dat)="pushDateV($event)" (valid)="peek($event)" (updat)="updateData($event)" (del)="delete(i)">No dates entered.</app-dates>
+              <br>
               <div>
-                <mat-form-field class="time" appearance="fill">
-                  <mat-label>Hours</mat-label>
-                  <mat-select name="SDH" [(ngModel)]="selSTH">
-                    <mat-option [value]="s" *ngFor="let s of startTH">{{ s }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field class="time" appearance="fill">
-                  <mat-label>Minutes</mat-label>
-                  <mat-select name="SDM" [(ngModel)]="selSTM">
-                    <mat-option [value]="s" *ngFor="let s of startTM">{{ s }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
+                <button mat-flat-button (click)="pushDate($event)" color="primary">Add Date</button>
               </div>
+            </div>
+          <br><br>
+          <h3>Select Time Zone</h3>
+          <mat-form-field class="time_zone" appearance="fill">
+            <mat-label>Select Time Zone</mat-label>
+            <mat-select matInput name="TZ" (ngModelChange)="setTimeZoneValue($event)" [ngModel]="selTZ | async">
+              <mat-option name="t_opt" [value]="t.text" *ngFor="let t of TimeZones | async">{{ t.text }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br>
+        </mat-expansion-panel>
+        <br>
+        <table id="options">
+          <tr>
+            <td>
+              <button mat-button color="primary" [disabled]="dis">Save</button>
             </td>
             <td>
-              <div>
-                <mat-form-field class="time" appearance="fill">
-                  <mat-label>Hours</mat-label>
-                  <mat-select name="EDH" [(ngModel)]="selETH">
-                    <mat-option [value]="s" *ngFor="let s of endTH">{{ s }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field class="time" appearance="fill">
-                  <mat-label>Minutes</mat-label>
-                  <mat-select name="EDM" [(ngModel)]="selETM">
-                    <mat-option [value]="s" *ngFor="let s of endTM">{{ s }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-            </div>
+              |
+            </td>
+            <td>
+              <button mat-button color="primary">Next</button>
             </td>
           </tr>
-        </table>   -->
-      <br>
-      <h2>Select Time Zone</h2>
-      <br>
-      <mat-form-field class="time_zone" appearance="fill">
-        <mat-label>Select Time Zone</mat-label>
-        <mat-select matInput name="TZ" (ngModelChange)="setTimeZoneValue($event)" [ngModel]="selTZ | async">
-          <mat-option name="t_opt" [value]="t.text" *ngFor="let t of TimeZones | async">{{ t.text }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <br>
-      <button mat-flat-button color="primary" [disabled]="dis">Save</button>
+        </table>
       </form>
     </mat-tab>
     <mat-tab label="* Setup"></mat-tab>
