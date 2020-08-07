@@ -1,14 +1,14 @@
 <div id="content">
-  <mat-tab-group id="nav">
+  <form (submit)="check()" class="sign-for">
+    <mat-tab-group id="nav" [(selectedIndex)]="tab_id">
     <mat-tab label="* Summary">
       <br><br>
-      <form (submit)="check()" class="sign-form">
       <!-- Event Description -->
         <mat-expansion-panel [expanded]="true">
           <mat-expansion-panel-header>
             <mat-panel-title><h2>Event Information</h2></mat-panel-title>
           </mat-expansion-panel-header>
-          <app-details (valid)="checkDesc($event)"></app-details>
+          <app-details [default]="details" (getdesc)="setEventDesc($event)" (event_type)="setEventType($event)" (event_name)="setEventName($event)" (valid)="checkDesc($event)" (getlang)="setLanguage($event)" (getInd)="setIndustry($event)"></app-details>
           <br><br>
         </mat-expansion-panel>
         
@@ -44,24 +44,32 @@
           </mat-form-field>
           <br>
         </mat-expansion-panel>
-        <br>
-        <table id="options">
-          <tr>
-            <td>
-              <button mat-button color="primary" [disabled]="dis">Save</button>
-            </td>
-            <td>
-              |
-            </td>
-            <td>
-              <button mat-button color="primary">Next</button>
-            </td>
-          </tr>
-        </table>
-      </form>
-    </mat-tab>
-    <mat-tab label="* Setup"></mat-tab>
-    <mat-tab label="* Flyer Design"></mat-tab>
-    <mat-tab label="* Publish and Share"></mat-tab>
-  </mat-tab-group>
+      </mat-tab>
+      <mat-tab label="* Setup">
+      <!-- App setup -->
+        <app-setup [dates]="datesV"></app-setup>
+      </mat-tab>
+      <mat-tab label="* Flyer Design">
+        <!-- Flyer -->
+
+        <app-drag-drop></app-drag-drop>
+
+      </mat-tab>
+      <mat-tab label="* Publish and Share"></mat-tab>
+    </mat-tab-group>
+    <br>
+    <table id="options">
+      <tr>
+        <td>
+          <button mat-button color="primary" [disabled]="dis">Save</button>
+        </td>
+        <td>
+          |
+        </td>
+        <td>
+          <button mat-button color="primary" (click)="onNext($event)">Next</button>
+        </td>
+      </tr>
+    </table>
+  </form>
 </div>

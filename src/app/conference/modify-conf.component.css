@@ -1,9 +1,18 @@
+#contain {
+    width: 70%;
+    margin-left: 15vw;
+}
+
+#confs {
+    width: 100%;
+}
+
 .warning {
     color: red;
 }
 
-h3 {
-    text-decoration: underline;
+.time {
+    width: 5vw;
 }
 
 #counter {
@@ -13,4 +22,8 @@ h3 {
     text-align: right;
     padding: 5px 15px;
     text-align: right;
+}
+
+#evType {
+    width: 70%;
 }

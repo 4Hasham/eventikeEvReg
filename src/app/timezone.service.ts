@@ -7,8 +7,7 @@ import { HttpClient } from '@angular/common/http';
 @Injectable()
 export class TimeZoneService {
 
-    constructor(private http: HttpClient) {
-    }
+    constructor(private http: HttpClient) {}
         
     public getTimeZones = new Observable<any>(subscriber => {
         const header1 = { 'content-type': 'application/json' };
@@ -42,6 +41,28 @@ export class TimeZoneService {
                     selTZ = TimeZones.filter(option => option.text.toLowerCase().includes(t.toLowerCase()))[0].text;
                 }
                 subscriber.next(selTZ);
+                subscriber.complete();
+            }
+        });
+    });
+
+    public getTimeZoneValue = new Observable<number>(subscriber => {
+        let TimeZones: any = [];
+        let val: number = 0;
+        this.getTimeZones.subscribe({
+            next(data) {
+                TimeZones = data;
+            },
+            complete() {
+                let local = new Date();
+                let localH = local.getTimezoneOffset() / -60;
+                for(let t of TimeZones) {
+                    if(t.value == localH) {
+                        val = t.value;
+                        break;
+                    }
+                }
+                subscriber.next(val);
                 subscriber.complete();
             }
         });

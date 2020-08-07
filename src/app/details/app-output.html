@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Description Output</h2>
+<mat-dialog-content class="mat-typography">
+    <div [innerHTML]="data.desc"></div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <!-- <button mat-button (click)="closeDialog()">Cancel</button> -->
+    <button mat-button (click)="closeDialog()" [mat-dialog-close]="true" cdkFocusInitial>OK</button>
+</mat-dialog-actions>

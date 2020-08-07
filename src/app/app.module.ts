@@ -19,13 +19,29 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs'; 
 import { MatExpansionModule } from '@angular/material/expansion';
 import { DetailsComponent } from './details/details.component';
+import { OutputComponent } from './details/details.component';
 import { QuillModule } from 'ngx-quill';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { DragDropComponent } from './drag-drop/drag-drop.component';
+import { MaterialFileInputModule } from 'ngx-material-file-input';
+import { MatDialogModule } from '@angular/material/dialog';
+import { DialogBoxComponent } from './drag-drop/drag-drop.component';
+import { ConferenceComponent } from './conference/conference.component'
+// import { ModifyComponent } from './conference/conference.component'
+import { MatTableModule } from '@angular/material/table';
+import { SetupComponent } from './setup/setup.component'; 
 
 @NgModule({
   declarations: [
     AppComponent,
     DatesComponent,
     DetailsComponent,
+    OutputComponent,
+    DragDropComponent,
+    DialogBoxComponent,
+    ConferenceComponent,
+    // ModifyComponent,
+    SetupComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +61,11 @@ import { QuillModule } from 'ngx-quill';
     MatIconModule,
     MatTabsModule,
     MatExpansionModule,
-    QuillModule.forRoot()
+    QuillModule.forRoot(),
+    DragDropModule,
+    MaterialFileInputModule,
+    MatDialogModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

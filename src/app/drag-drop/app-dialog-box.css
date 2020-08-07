@@ -1,0 +1,15 @@
+.contain {
+    height: 1000px;
+    width: 1500px;
+    text-align: center;
+}
+
+img {
+    /* justify-content: center;
+    align-items: center;
+    text-align: center; */
+    cursor: move;
+    /* z-index: 1; */
+    display: inline-flex;
+    /* margin: 0 auto; */
+}

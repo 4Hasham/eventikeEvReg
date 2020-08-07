@@ -1,0 +1,1 @@
+POST https://meet.eventike.com:3000/api/get-event

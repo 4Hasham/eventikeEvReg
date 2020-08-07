@@ -1,0 +1,16 @@
+<br><br>
+<mat-tab-group id="setup_tabs" mat-stretch-tabs backgroundColor="primary" color="primary" [(selectedIndex)]="setup_id">
+    <mat-tab label="Conferences">
+        <app-conference [dates]="dates"></app-conference>
+    </mat-tab>
+    <mat-tab label="Booths">
+        <!-- Booths -->
+        
+    </mat-tab>
+    <mat-tab label="Attendees">
+        <!-- Attendees -->
+    </mat-tab>
+</mat-tab-group>
+<br><br>
+<button id="nextButton" mat-button color="primary" (click)="onNext($event)">Next</button>
+

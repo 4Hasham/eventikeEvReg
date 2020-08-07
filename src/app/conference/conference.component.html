@@ -1,0 +1,169 @@
+<br><br>
+
+<!-- Conferences -->
+<mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            <h2>Conference</h2>
+        </mat-panel-title>
+    </mat-expansion-panel-header>
+    
+    <br>
+    <table mat-table #table [dataSource]="dataSource" table id="confs">
+        <ng-container matColumnDef="room" sticky>
+            <th mat-header-cell *matHeaderCellDef> Conference Room </th>
+            <td mat-cell *matCellDef="let element"> {{element.room}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef> Title </th>
+            <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef> Date </th>
+            <td mat-cell *matCellDef="let element"> {{element.date}} </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="time">
+            <th mat-header-cell *matHeaderCellDef> Time </th>
+            <td mat-cell *matCellDef="let element"> {{element.time}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef> Action </th>
+            <td mat-cell *matCellDef="let element"> <a href="javascript:" (click)="removeConference(element.action)"><mat-icon>remove</mat-icon></a> <a href="javascript:" (click)="editConference(element.action)"><mat-icon>edit</mat-icon> </a></td>
+        </ng-container>
+ 
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>    
+    <br>
+</mat-expansion-panel>
+
+<!-- New Conference Form -->
+<mat-expansion-panel [expanded]="edit">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            <h2 *ngIf="!edit">Add New Conference</h2>
+            <h2 *ngIf="edit">Update Conference</h2>
+        </mat-panel-title>        
+    </mat-expansion-panel-header>
+    <p class="warning" *ngIf="errors[0]">Please enter event name.</p>
+    <p *ngIf="addedF">Added a new confernce.</p>
+    <br>
+    <mat-form-field>
+        <mat-label>Room Name</mat-label>
+        <input matInput [formControl]="control" [matAutocomplete]="auto" name="ev_name" [ngModel]="name" (ngModelChange)="saveName($event)">
+        <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let opt of suggestions | async" [value]="opt">{{ opt }}</mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
+    <br>
+    <p class="warning" *ngIf="errors[3]">Please enter a valid title.</p>
+    <br>
+    <mat-form-field>
+        <mat-label>Conference Title</mat-label>
+        <input matInput name="c_name" [ngModel]="title" (ngModelChange)="saveTitle($event)">
+    </mat-form-field>
+    <br><br>
+    <h3>Description</h3>
+    <p class="warning" *ngIf="errors[1]">The description should be more detailed that that (at least 20 characters long).</p>
+    <p class="warning" *ngIf="errors[2]">The description should not exceed the character limit of 1000.</p>
+    <quill-editor [styles]="{'height': '250px'}" [ngModel]="desc" (ngModelChange)="saveDesc($event)" (onContentChanged)="count($event)"></quill-editor>
+    <div id="counter">{{"Characters: " + counter}}</div>
+    <br><br>
+    <h3>Conference Date</h3>
+    <br>
+    <table>
+        <tr>
+            <td>
+                <mat-form-field appearance="fill">
+                <mat-label>Choose start date</mat-label>
+                <input name="START_DATE" [value]="date" (dateInput)="saveDate($event)" matInput [matDatepicker]="picker" readonly="readonly" [disabled]="edit">
+                <mat-datepicker-toggle matSuffix [for]="picker" [disabled]="edit"></mat-datepicker-toggle>
+                <mat-datepicker #picker disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Start Time
+            </td>
+            <td>
+                End Time
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p cla ss="warning" *ngIf="errors[4]">Start time must be before than end time.</p>
+            </td>   
+        </tr>
+        <tr>
+            <td>
+                <mat-form-field class="time" appearance="fill">
+                <mat-label>Hours</mat-label>
+                <mat-select name="sTimeH" [ngModel]="sTimeH" (ngModelChange)="setNewTime($event, 1)" [disabled]="edit">
+                    <mat-option [value]="s" *ngFor="let s of hours">{{ s }}</mat-option>
+                </mat-select>
+                </mat-form-field>
+                :
+                <mat-form-field class="time" appearance="fill">
+                <mat-label>Minutes</mat-label>
+                <mat-select name="sTimeM" [(ngModel)]="sTimeM" (ngModelChange)="setNewTime($event, 2)" [disabled]="edit">
+                    <mat-option [value]="s" *ngFor="let s of mins">{{ s }}</mat-option>
+                </mat-select>
+                </mat-form-field>
+                <br>
+            </td>
+            <td>
+                <mat-form-field class="time" appearance="fill">
+                <mat-label>Hours</mat-label>
+                <mat-select name="eTimeH" [ngModel]="eTimeH" (ngModelChange)="setNewTime($event, 3)" [disabled]="edit">
+                    <mat-option [value]="s" *ngFor="let s of hours">{{ s }}</mat-option>
+                </mat-select>
+                </mat-form-field>
+                :
+                <mat-form-field class="time" appearance="fill">
+                <mat-label>Minutes</mat-label>
+                <mat-select name="eTimeM" [ngModel]="eTimeM" (ngModelChange)="setNewTime($event, 4)" [disabled]="edit">
+                    <mat-option [value]="s" *ngFor="let s of mins">{{ s }}</mat-option>
+                </mat-select>
+                </mat-form-field>
+                <br>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <h3>Conference Type</h3>
+    <br>
+    <mat-radio-group [ngModel]="type" (ngModelChange)="changeType($event)">
+    <table id="evType">
+        <tr>
+            <td>
+                <mat-radio-button value="free">Free</mat-radio-button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <br><mat-radio-button value="pass">Pass</mat-radio-button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <mat-radio-button value="paid">Paid</mat-radio-button>
+            </td>
+            <td>
+                <mat-form-field>
+                    <span matPrefix>$ &nbsp;</span>
+                    <mat-label>Amount</mat-label>
+                    <input [(ngModel)]="amount" name="amount" matInput maxlength="5" [disabled]="amountFlag">
+                </mat-form-field>
+            </td>
+        </tr>
+    </table>
+    </mat-radio-group>
+    <br>
+    <button mat-flat-button color="primary" (click)="newConference()" *ngIf="!edit" [disabled]="flag">Create</button>
+    <button mat-flat-button color="primary" (click)="editConference(index)" *ngIf="edit" [disabled]="flag">Update</button>
+</mat-expansion-panel>

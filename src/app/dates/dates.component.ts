@@ -50,7 +50,6 @@ export class DatesComponent implements OnInit {
     this.eTimeH = parseInt(this.initial[2]);
     this.sTimeM = parseInt(this.initial[3]);
     this.eTimeM = parseInt(this.initial[4]);
-    console.log("ngOnInit: " + this.id);
     let obj = {
       id: this.id,
       date: this.date.getDate() + "/" + this.date.getMonth() + "/" + this.date.getFullYear(),
@@ -101,7 +100,6 @@ export class DatesComponent implements OnInit {
     else {
       return false;
     }
-    
   }
 
   checkValidity = (): void => {
@@ -172,29 +170,29 @@ export class DatesComponent implements OnInit {
     this.del.emit();
   }
 
-  getNextEnabled = (din, mah, sal): Date => {
-    let c: boolean = true;
-    let temp: string;
-    let next = new Date();
-    next.setDate(din);
-    next.setMonth(mah);
-    next.setFullYear(sal);
+  // getNextEnabled = (din, mah, sal): Date => {
+  //   let c: boolean = true;
+  //   let temp: string;
+  //   let next = new Date();
+  //   next.setDate(din);
+  //   next.setMonth(mah);
+  //   next.setFullYear(sal);
     
-    while(c) {
-      next.setDate(next.getDate() + 1);
-      temp = next.getDate() + "/" + next.getMonth() + "/" + next.getFullYear();
-      if(this.dates.length ! = 0) {
-        for(let i = 0; i < this.dates.length; i++) {
-          let aj = JSON.parse(this.dates[i]["date"]);
-          if(aj == temp) {
-            break;
-          }
-          else if(aj != temp) {
-            c = false;
-          }
-        }
-      }
-    }
-    return next;
-  }
+  //   while(c) {
+  //     next.setDate(next.getDate() + 1);
+  //     temp = next.getDate() + "/" + next.getMonth() + "/" + next.getFullYear();
+  //     if(this.dates.length ! = 0) {
+  //       for(let i = 0; i < this.dates.length; i++) {
+  //         let aj = JSON.parse(this.dates[i]["date"]);
+  //         if(aj == temp) {
+  //           break;
+  //         }
+  //         else if(aj != temp) {
+  //           c = false;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   return next;
+  // }
 }

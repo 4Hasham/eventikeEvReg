@@ -1,28 +1,46 @@
-<p class="warning" *ngIf="flag[0]">Please enter event name.</p>
-<p class="warning" *ngIf="flag[1]">Please choose a suitable name for event.</p>
+<p class="warning" *ngIf="errors[0]">Please enter event name.</p>
 <br>
 <mat-form-field>
     <mat-label>Enter Event Name</mat-label>
-    <input matInput name="ev_name" [(ngModel)]="name">
+    <input matInput name="ev_name" [ngModel]="name" (ngModelChange)="saveName($event)">
 </mat-form-field>
 <br><br>
 <h3>Description</h3>
-<quill-editor></quill-editor>
+<p class="warning" *ngIf="errors[1]">The description should be more detailed that that (at least 20 characters long).</p>
+<p class="warning" *ngIf="errors[2]">The description should not exceed the character limit of 1000.</p>
+<quill-editor [styles]="{'height': '250px'}" [ngModel]="desc" (ngModelChange)="saveDesc($event)" (onContentChanged)="count($event)"></quill-editor>
+<div id="counter">{{"Characters: " + counter}}</div>
 <br><br>
-  <h3>Event Type</h3>
-  <br>
-  <mat-radio-group [(ngModel)]="type">
-    <table>
-      <tr>
-        <td>
-          <mat-radio-button value="free">Free</mat-radio-button>
-        </td>
-        <td>
+<h3>Language</h3>
+<mat-form-field class="time_zone" appearance="fill">
+  <mat-label>Select Language</mat-label>
+  <mat-select matInput name="lang" (ngModelChange)="setLanguageValue($event)" [ngModel]="lang">
+    <mat-option name="l_opt" [value]="t.native" *ngFor="let t of languages | async">{{ t.native }}</mat-option>
+  </mat-select>
+</mat-form-field>
+<br><br>
+<h3>Industry</h3>
+<mat-form-field class="time_zone" appearance="fill">
+  <mat-label>Select Industry</mat-label>
+  <mat-select matInput name="ind" (ngModelChange)="setIndustryValue($event)" [ngModel]="ind">
+    <mat-option name="i_opt" [value]="t" *ngFor="let t of industries | async">{{ t }}</mat-option>
+  </mat-select>
+</mat-form-field>
+<br><br>
+<h3>Event Type</h3>
+<br>
+<mat-radio-group [ngModel]="type" (ngModelChange)="changeType($event)">
+  <table>
+    <tr>
+      <td>
+        <mat-radio-button value="free">Free</mat-radio-button>
+      </td>
+      <td>
 
-        </td>
-        <td>
-          <mat-radio-button value="paid">Paid</mat-radio-button>
-        </td>
-      </tr>
-    </table>
-  </mat-radio-group>
+      </td>
+      <td>
+        <mat-radio-button value="paid">Paid</mat-radio-button>
+      </td>
+    </tr>
+  </table>
+</mat-radio-group>

@@ -15,11 +15,22 @@
     },
     {
       "path": "./e2e/tsconfig.json"
-    }
+    },
   ],
   "compilerOptions": {
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "baseUrl": "./src",
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    // "resolveJsonModule": true,
+    // "allowSyntheticDefaultImports": true,
+    // "esModuleInterop": true,
+    "paths": {
+      "@fuse": ["@fuse/"],
+      "@environments/*": ["environments/*"]
+    }
   }
 }

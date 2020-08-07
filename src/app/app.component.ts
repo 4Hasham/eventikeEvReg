@@ -1,8 +1,8 @@
-import { Component, OnInit, ɵCodegenComponentFactoryResolver } from '@angular/core';
+import { Component, OnInit, Input, Output, ɵCodegenComponentFactoryResolver } from '@angular/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { TimeZoneService } from './timezone.service';
 import { Observable, Observer } from 'rxjs';
-//import { apiUrl } from '../../../../../environments/settings';
+import { apiUrl } from '../environments/settings';
 import { HttpClient } from '@angular/common/http';
 //import { FormControl } from '@angular/forms';
 //import { map, startWith } from 'rxjs/operators';
@@ -27,8 +27,21 @@ export class AppComponent implements OnInit {
   public datesV: string[];
   public int2;
   public interval2Set: boolean;
+  public eventName: string;
+  public eventDesc: any;
+  public eventType: string;
+  public eventLanguage: string;
+  public eventIndustry: string;
+  public event_id: number;
+  public tab_id: number;
+  public tab: number;
+  public details: Object;
 
-  constructor(private service: TimeZoneService, private http: HttpClient) {
+  @Input() id_event: number;
+
+  constructor(private service: TimeZoneService, private http: HttpClient) {}
+
+  ngOnInit() {
 
     this.dis = true;
     this.selTZ = "";
@@ -37,9 +50,12 @@ export class AppComponent implements OnInit {
     this.dates = ['dates_1'];
     this.datesF = 1;
     this.datesV = [];
-  }
+    this.event_id = 0;
+    this.tab_id = 0;
 
-  ngOnInit() {
+    if(this.id_event) {
+      this.event_id = this.id_event;
+    }
 
     this.selTZ = new Observable<string>((observer: Observer<string>) => {
       this.service.userTimezone.subscribe({
@@ -56,11 +72,41 @@ export class AppComponent implements OnInit {
         }
       });
     });
+
+    if(this.event_id != 0) {
+      let url =  `${apiUrl}api/get-event`;
+      this.http.post(url, null).subscribe(
+        (data) => {
+          this.details = {
+            name: data["eventName"],
+            type: data["eventType"],
+            desc: data["eventDesc"],
+            lang: data["eventLanguage"],
+            ind: data["eventIndustry"]
+          };
+          this.dates = data["dates"];
+          this.selTZ = data["timezone"];
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
   }
 
   getTimeZone() {
     return new Promise<string>(resolve => {
       this.selTZ.subscribe({
+        next(x) {
+          resolve(x);
+        }
+      });
+    })
+  }
+
+  getTimeZoneValue() {
+    return new Promise<number>(resolve => {
+      this.service.getTimeZoneValue.subscribe({
         next(x) {
           resolve(x);
         }
@@ -111,12 +157,47 @@ export class AppComponent implements OnInit {
         }
       }
     }
-    console.log(this.datesV);
+  }
+
+  async sendResult() {
+
+    let eventInfo = new Object();
+    let selT =  await this.getTimeZone();
+
+    eventInfo = {
+      event_id: this.event_id,
+      tab_id: this.tab_id + 1,
+      dates: this.datesV,
+      timezone: selT,
+      timezoneValue: await this.getTimeZoneValue(),
+      eventName: this.eventName,
+      eventDesc: this.eventDesc,
+      eventType: this.eventType,
+      eventLanguage: this.eventLanguage,
+      eventIndustry: this.eventIndustry
+    }
+
+    console.log(eventInfo);
+
+    let url = `${apiUrl}api/update-event`;
+
+    this.http.post(url, eventInfo).subscribe(
+    (data) => {
+      if(data['status']) {
+        console.log(data);
+        this.event_id = data['event_id'];
+      }
+      else {
+        console.log(data['message']);
+      }
+    },
+    (error) => {
+      console.log(error);
+    });
   }
 
   async check() {
     
-    let eventInfo = new Object();
     let selT =  await this.getTimeZone();
 
     if (selT.trim() != "") {
@@ -130,23 +211,14 @@ export class AppComponent implements OnInit {
       this.flags[1] = false;
       this.flags[2] = false;
     }
-    eventInfo = {
-      dates: this.datesV,
-      timezone: selT
-    }
 
-  //   this.http.post(url, eventInfo).subscribe(
-  //   (data) => {
-  //     if(data['status']) {
-  //       console.log(data);
-  //     }
-  //     else {
-  //       console.log(data['message']);
-  //     }
-  //   },
-  //   (error) => {
-  //     console.log(error);
-  //   });
+    this.sendResult();
+  }
+
+  onNext = (event: any) => {
+    event.preventDefault();
+    this.sendResult();
+    this.tab_id++;
   }
 
   pushDate = (event: any): any => {
@@ -157,28 +229,45 @@ export class AppComponent implements OnInit {
 
   pushDateV = (event: string): void => {
     this.sort();
-    console.log(event);
     this.datesV.push(event);
-    console.log(this.datesV);
   }
 
   checkDesc = (event: any) => {
-    console.log("FIRED");
     this.descF = event;
+    this.dis  = this.descF;
   }
 
   checks = () => {
-    console.log(this.dates.length, this.datesF);
     if(this.datesF == this.dates.length && this.datesF != 0) {
-      this.dis = false;
+      if(!this.descF) {
+        this.dis = false;
+      }
     }
     else if(this.datesF != this.dates.length) {
       this.dis = true;
     }
-    console.log("OH YEA");
-    this.dis = this.descF;
   }
 
+  setEventDesc = (event: any) => {
+    this.eventDesc = event;
+  }
+
+  setEventType = (event: any) => {
+    this.eventType = event;
+  }
+  
+  setEventName = (event: any) => {
+    this.eventName = event;
+  }
+
+  setLanguage = (event: any) => {
+    this.eventLanguage = event;
+  }
+
+  setIndustry = (event: any) => {
+    this.eventIndustry = event;
+  }
+  
   peek = (event: any, index: number): void => {
     if(!this.interval2Set) {
       this.int2 = setInterval(this.checks, 2500);
