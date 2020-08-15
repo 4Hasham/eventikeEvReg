@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-setup',
@@ -10,6 +10,9 @@ export class SetupComponent implements OnInit {
 
   public setup_id: number;
   @Input() dates: string[];
+  @Input() eventID: number;
+  @Output() confs = new EventEmitter<Object[]>();
+  @Output() invitees = new EventEmitter<Object[]>();
 
   constructor() {}
 
@@ -22,4 +25,11 @@ export class SetupComponent implements OnInit {
     this.setup_id++;
   }
 
+  sendData = (event: any) => {
+    this.confs.emit(event);
+  }
+
+  sendInvites = (event: any) => {
+    this.invitees.emit(event);
+  }
 }

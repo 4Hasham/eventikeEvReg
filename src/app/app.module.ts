@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms'
 import { ReactiveFormsModule } from '@angular/forms'
 import { MatSelectModule } from '@angular/material/select'
 import { MatInputModule } from '@angular/material/input'
-import { AppComponent } from './app.component'
+import { NewEventComponent } from './newevent.component'
 import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -27,21 +27,23 @@ import { MaterialFileInputModule } from 'ngx-material-file-input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DialogBoxComponent } from './drag-drop/drag-drop.component';
 import { ConferenceComponent } from './conference/conference.component'
-// import { ModifyComponent } from './conference/conference.component'
 import { MatTableModule } from '@angular/material/table';
-import { SetupComponent } from './setup/setup.component'; 
+import { SetupComponent } from './setup/setup.component';
+import { InvitationComponent } from './conference/invitation/invitation.component';
+import { CallbackPipe } from './callback.pipe'; 
 
 @NgModule({
   declarations: [
-    AppComponent,
+    NewEventComponent,
     DatesComponent,
     DetailsComponent,
     OutputComponent,
     DragDropComponent,
     DialogBoxComponent,
     ConferenceComponent,
-    // ModifyComponent,
-    SetupComponent
+    SetupComponent,
+    InvitationComponent,
+    CallbackPipe
   ],
   imports: [
     BrowserModule,
@@ -68,6 +70,6 @@ import { SetupComponent } from './setup/setup.component';
     MatTableModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [NewEventComponent]
 })
 export class AppModule { }

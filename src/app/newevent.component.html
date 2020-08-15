@@ -28,7 +28,7 @@
           </div>
           <br>
             <div>
-              <app-dates *ngFor="let d of dates; index as i" [id]="i+1" [dis]="verifyFirst(i)" [initial]="lastDate(i)" [dates]="datesV" (dat)="pushDateV($event)" (valid)="peek($event)" (updat)="updateData($event)" (del)="delete(i)">No dates entered.</app-dates>
+              <app-dates *ngFor="let d of dates | callback: filterDates; index as i" [num]="i+1" [id]="dateID" [dis]="verifyFirst(i)" [initial]="lastDate(i)" [dates]="datesV" (dat)="pushDateV($event)" (valid)="peek($event)" (updat)="updateData($event)" (del)="delete(i, $event)">No dates entered.</app-dates>
               <br>
               <div>
                 <button mat-flat-button (click)="pushDate($event)" color="primary">Add Date</button>

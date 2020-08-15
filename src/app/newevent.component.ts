@@ -1,20 +1,19 @@
-import { Component, OnInit, Input, Output, ɵCodegenComponentFactoryResolver } from '@angular/core';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { Component, OnInit, Input } from '@angular/core';
 import { TimeZoneService } from './timezone.service';
+import { DatesService } from './dates.service';
 import { Observable, Observer } from 'rxjs';
 import { apiUrl } from '../environments/settings';
 import { HttpClient } from '@angular/common/http';
-//import { FormControl } from '@angular/forms';
-//import { map, startWith } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
-  providers: [TimeZoneService]
+  templateUrl: './newevent.component.html',
+  styleUrls: ['./newevent.component.css'],
+  providers: [TimeZoneService, DatesService]
 })
 
-export class AppComponent implements OnInit {
+export class NewEventComponent implements OnInit {
 
   public dis: Boolean;
   public TimeZones: any = [];
@@ -24,7 +23,8 @@ export class AppComponent implements OnInit {
   public dates: string[];
   public datesF: number;
   public descF: boolean;
-  public datesV: string[];
+  public datesV: Object[];
+  public dateV: any = [];
   public int2;
   public interval2Set: boolean;
   public eventName: string;
@@ -36,10 +36,11 @@ export class AppComponent implements OnInit {
   public tab_id: number;
   public tab: number;
   public details: Object;
+  public dateID: number;
 
   @Input() id_event: number;
 
-  constructor(private service: TimeZoneService, private http: HttpClient) {}
+  constructor(private service: TimeZoneService, private service_: DatesService, private http: HttpClient) {}
 
   ngOnInit() {
 
@@ -47,12 +48,12 @@ export class AppComponent implements OnInit {
     this.selTZ = "";
     this.flags = [false, false, false, false];
     this.success = false;
-    this.dates = ['dates_1'];
-    this.datesF = 1;
+    this.dates = ['date_1'];
     this.datesV = [];
+    this.datesF = 1;
     this.event_id = 0;
     this.tab_id = 0;
-
+    this.dateID = 0;
     if(this.id_event) {
       this.event_id = this.id_event;
     }
@@ -73,25 +74,23 @@ export class AppComponent implements OnInit {
       });
     });
 
-    if(this.event_id != 0) {
-      let url =  `${apiUrl}api/get-event`;
-      this.http.post(url, null).subscribe(
-        (data) => {
-          this.details = {
-            name: data["eventName"],
-            type: data["eventType"],
-            desc: data["eventDesc"],
-            lang: data["eventLanguage"],
-            ind: data["eventIndustry"]
-          };
-          this.dates = data["dates"];
-          this.selTZ = data["timezone"];
-        },
-        (error) => {
-          console.log(error);
+    this.dateV = new Observable<any>((observer: Observer<any>) => {
+      this.service_.returnDates.subscribe({
+        next(x) {
+          observer.next(x);
         }
-      );
-    }
+      });
+    });
+  }
+
+  getDates() {
+    return new Promise<string>(resolve => {
+      this.dateV.subscribe({
+        next(x) {
+          resolve(x);
+        }
+      });
+    })
   }
 
   getTimeZone() {
@@ -130,13 +129,13 @@ export class AppComponent implements OnInit {
     let smallestMon: number = 10000;
     let smallestYear: number = 10000;
     for(let i = 0; i < this.datesV.length - 1; i++) {
-      smallestDate = parseInt(JSON.parse(this.datesV[i])["date"].split('/')[0]);
-      smallestMon = parseInt(JSON.parse(this.datesV[i])["date"].split('/')[1]);
-      smallestYear = parseInt(JSON.parse(this.datesV[i])["date"].split('/')[2]);
+      smallestDate = parseInt(this.datesV[i]["date"].split('-')[2]);
+      smallestMon = parseInt(this.datesV[i]["date"].split('-')[1]);
+      smallestYear = parseInt(this.datesV[i]["date"].split('-')[0]);
       for(let j = i + 1; j < this.datesV.length; j++) {
-        let date = parseInt(JSON.parse(this.datesV[j])["date"].split('/')[0]);
-        let mon = parseInt(JSON.parse(this.datesV[j])["date"].split('/')[1]);
-        let year = parseInt(JSON.parse(this.datesV[j])["date"].split('/')[2]);
+        let date = parseInt(this.datesV[j]["date"].split('-')[2]);
+        let mon = parseInt(this.datesV[j]["date"].split('-')[1]);
+        let year = parseInt(this.datesV[j]["date"].split('-')[0]);
 
         if(year <= smallestYear) {
           if(year == smallestYear) {
@@ -157,6 +156,7 @@ export class AppComponent implements OnInit {
         }
       }
     }
+    console.log(this.dates, this.datesV);
   }
 
   async sendResult() {
@@ -176,8 +176,6 @@ export class AppComponent implements OnInit {
       eventLanguage: this.eventLanguage,
       eventIndustry: this.eventIndustry
     }
-
-    console.log(eventInfo);
 
     let url = `${apiUrl}api/update-event`;
 
@@ -200,16 +198,25 @@ export class AppComponent implements OnInit {
     
     let selT =  await this.getTimeZone();
 
-    if (selT.trim() != "") {
-      this.success = true;
-      this.flags[0] = false;
-      this.flags[1] = false;
-      this.flags[2] = false;
-    }
-    else {
-      this.flags[0] = true;
-      this.flags[1] = false;
-      this.flags[2] = false;
+    switch (this.tab_id) {
+      case 0:
+        if (selT.trim() != "") {
+          this.success = true;
+          this.flags[0] = false;
+          this.flags[1] = false;
+          this.flags[2] = false;
+        }
+        else {
+          this.flags[0] = true;
+          this.flags[1] = false;
+          this.flags[2] = false;
+        }
+        break;
+      case 1:
+        this.dis = false;
+        break;
+      default:
+        break;
     }
 
     this.sendResult();
@@ -217,19 +224,23 @@ export class AppComponent implements OnInit {
 
   onNext = (event: any) => {
     event.preventDefault();
-    this.sendResult();
+    this.check();
     this.tab_id++;
   }
 
   pushDate = (event: any): any => {
     event.preventDefault();
-    this.dates.push('date_' + (this.dates.length + 1));
+    this.dateID++;
+    this.dates.push('date_' + (this.dateID + 1));
+    console.log(this.dates);
     this.datesF++;
+    this.sort();
   }
 
   pushDateV = (event: string): void => {
     this.sort();
     this.datesV.push(event);
+    console.log(this.datesV);
   }
 
   checkDesc = (event: any) => {
@@ -281,9 +292,31 @@ export class AppComponent implements OnInit {
     }
   }
 
-  delete(i: number) {
-    this.dates.splice(i, 1);
-    this.datesV.splice(i, 1);
+  getArrayIndex = (index: number, date: string): number => {
+    for (let i = 0; i < this.datesV.length; i++) {
+      if(i == index && date == this.datesV[i]['date']) {
+        if(this.datesV[i]['action'] == 'deleted') {
+          return this.getArrayIndex(i+1, date);
+        }
+        else {
+          return i;
+        }
+      }
+      else if(i == index && date != this.datesV[i]['date']) {
+        return this.getArrayIndex(i+1, date);
+      }
+      else if(i != index) {
+        continue;
+      }
+      else {
+        return i;
+      }
+    }
+  }
+
+  delete(num: number, event: string) {
+    let i = this.getArrayIndex(num, event);
+    this.datesV[i]['action'] = 'deleted';
     this.datesF--;
     this.sort();
   }
@@ -312,36 +345,61 @@ export class AppComponent implements OnInit {
     }
   }
 
-  lastDate = (id: number): string[] => {
+  lastDate = (id: number) => {
+    //this.datesV = await this.getDates();
     if(this.datesV.length != 0 && id != 0) {
-      let last: Object = JSON.parse(this.datesV[this.datesV.length - 1]);
+      let i = this.datesV.length - 1;
+      let last: Object = this.datesV[i]
+      while(last['action'] == 'deleted') {
+        last = this.datesV[i];
+        i--;
+      }
       let date = last["date"];
-      let sh = last["startDateH"];
-      let eh = last["endDateH"];
-      let sm = last["startDateM"];
-      let em = last["endDateM"];
+      let sh = last["start_time"].split(':')[0];
+      let eh = last["end_time"].split(':')[0];
+      let sm = last["start_time"].split(':')[1];
+      let em = last["end_time"].split(':')[1];
       return [date, sh, eh, sm, em];
     }
     else {
       let today = new Date();
-      let s = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();
+      let s = today.getFullYear() + "-" + today.getMonth() + "-" + today.getDate();
       let sh = "9";
       let eh = "18";
       return [s, sh, eh, "0", "0"];
     }
   }
 
-  updateData = (event: string): void => {
-    let data = JSON.parse(event);
+  updateData = (event: Object) => {
+    //this.datesV = await this.getDates();
+    console.log(event);
+    let data = event;
     let j = 0;
     for(let i = 0; i < this.datesV.length; i++) {
-      if(parseInt(JSON.parse(this.datesV[i])["id"]) == parseInt(data["id"])) {
+      if(parseInt(this.datesV[i]["id"]) == parseInt(data["id"])) {
         j = i;
         break;
       }
     }
     this.datesV[j] = event;
     this.sort();
+  }
+
+  filterDates = (date: any): boolean => {
+    let i = this.dates.indexOf(date);
+    if(i == 0) {
+      return true;
+    } 
+    if(this.datesV[i]) {
+      return this.datesV[i]['action'] != 'deleted';
+    }
+    else {
+      return true;
+    }
+  }
+
+  trackDate = (index: number, item: string): number => {
+    return index;
   }
 
   title = 'app';

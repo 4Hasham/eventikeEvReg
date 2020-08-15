@@ -109,7 +109,6 @@ export class DetailsComponent implements OnInit {
     //   this.openDialog();
     // }
     this.type = event;
-    console.log(this.type);
     this.event_type.emit(this.type);
   } 
 
@@ -163,7 +162,7 @@ export class DetailsComponent implements OnInit {
 
   checkFlag = () => {
 
-    if(!this.errors[0] && !this.errors[1] && !this.errors[2] && this.name.trim().length != 0 && this.counter != 0) {
+    if(!this.errors[0] && !this.errors[1] && !this.errors[2] && this.name.trim().length != 0 && this.counter != 0 && this.ind.trim() != '') {
       this.flag = false;
     }
     else {

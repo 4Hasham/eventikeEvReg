@@ -1,0 +1,16 @@
+#invites {
+    width: 100%;
+}
+
+#counter {
+    color: #aaa;
+    border: 1px solid #aaa;
+    border-width: 1px 1px 1px 1px;
+    text-align: right;
+    padding: 5px 15px;
+    text-align: right;
+}
+
+.warning {
+    color: red;
+}

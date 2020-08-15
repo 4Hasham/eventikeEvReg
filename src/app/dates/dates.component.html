@@ -3,7 +3,7 @@
     <table>
         <tr>
             <td>
-                <label>{{ id }}</label>
+                <label>{{ num }}</label>
             </td>
             <td>
                 <mat-form-field appearance="fill">
@@ -44,7 +44,6 @@
                 <br>
             </td>
             <td>
-                <!-- <button mat-flat-button color="warn">Delete</button> -->
                 <a *ngIf="!dis" color="warn" href="javascript:"><mat-icon aria-hidden="false" (click)="delete()" aria-label="delete">delete</mat-icon></a>
             </td>
         </tr>

@@ -1,0 +1,95 @@
+<br>
+<h3>Conference</h3>
+<mat-form-field appearance="fill">
+  <mat-label>Select Conference</mat-label>
+  <mat-select matInput name="confs" (ngModelChange)="setConfValue($event)" [ngModel]="selConf">
+    <mat-option name="c_opt" [value]="t.title" *ngFor="let t of data_">{{ t.title }}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<h3>Date and hour</h3>
+<br>
+<p>{{ DateTime }}</p>
+<br>
+<h3>Description</h3>
+<p class="warning" *ngIf="errors[0]">The description should be more detailed that that (at least 20 characters long).</p>
+<p class="warning" *ngIf="errors[1]">The description should not exceed the character limit of 1000.</p>
+<quill-editor [styles]="{'height': '250px'}" [ngModel]="desc" (ngModelChange)="saveDesc($event)" (onContentChanged)="count($event)"></quill-editor>
+<div id="counter">{{"Characters: " + counter}}</div>
+<br><br>
+<h3>People Invited</h3>
+<br>
+<table mat-table #table [dataSource]="dataSource" table id="invites">
+  <ng-container matColumnDef="name" sticky>
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef> Email </th>
+      <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef> Phone </th>
+      <td mat-cell *matCellDef="let element"> {{element.phone}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="role">
+      <th mat-header-cell *matHeaderCellDef> Role </th>
+      <td mat-cell *matCellDef="let element"> {{element.role}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef> Action </th>
+      <td mat-cell *matCellDef="let element">
+          <a href="javascript:" (click)="removeInvite(element.action)"><mat-icon>remove</mat-icon></a>
+          <a href="javascript:" (click)="editInvite(null, element.action)"><mat-icon>edit</mat-icon> </a>
+      </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>    
+<br><br>
+<mat-expansion-panel [expanded]="edit">
+  <mat-expansion-panel-header>
+      <mat-panel-title>
+          <h2 *ngIf="!edit">Make New Invitation</h2>
+          <h2 *ngIf="edit">Update Invitation</h2>
+      </mat-panel-title>        
+  </mat-expansion-panel-header>
+  <p class="warning" *ngIf="errors[2]">Please enter a valid name.</p>
+  <!-- <p *ngIf="addedF">Added a new confernce.</p> -->
+  <br>
+  <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput name="in_name" [ngModel]="name" (ngModelChange)="saveName($event)">
+  </mat-form-field>
+  <br>
+  <p class="warning" *ngIf="errors[3]">Please enter a valid email address.</p>
+  <br>
+  <mat-form-field>
+      <mat-label>E-mail</mat-label>
+      <input matInput name="email" [ngModel]="email" (ngModelChange)="saveEmail($event)">
+  </mat-form-field>
+  <br>
+  <p class="warning" *ngIf="errors[4]">Please enter a valid phone number.</p>
+  <br>
+  <mat-form-field>
+      <mat-label>Phone #</mat-label>
+      <input type="phone" matInput name="phone" [ngModel]="phone" (ngModelChange)="savePhone($event)">
+  </mat-form-field>
+  <br><br>
+  <h3>Role</h3>
+  <mat-form-field appearance="fill">
+    <mat-label>Select Role</mat-label>
+    <mat-select matInput name="role_N" (ngModelChange)="setRole($event)" [ngModel]="role">
+      <mat-option name="r_opt" [value]="t" *ngFor="let t of roles">{{ t }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br>
+  <button mat-flat-button color="primary" (click)="newInvite($event)" *ngIf="!edit" [disabled]="flag">Create</button>
+  <button mat-flat-button color="primary" (click)="editInvite($event, index)" *ngIf="edit" [disabled]="flag">Update</button>
+  <button mat-flat-button color="warn" (click)="cancelUpdate($event)" *ngIf="edit" [disabled]="flag">Cancel Update</button>
+</mat-expansion-panel>

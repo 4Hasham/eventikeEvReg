@@ -30,9 +30,12 @@
             <td mat-cell *matCellDef="let element"> {{element.time}}</td>
         </ng-container>
 
-        <ng-container matColumnDef="action">
+        <ng-container matColumnDef="pos">
             <th mat-header-cell *matHeaderCellDef> Action </th>
-            <td mat-cell *matCellDef="let element"> <a href="javascript:" (click)="removeConference(element.action)"><mat-icon>remove</mat-icon></a> <a href="javascript:" (click)="editConference(element.action)"><mat-icon>edit</mat-icon> </a></td>
+            <td mat-cell *matCellDef="let element">
+                <a href="javascript:" (click)="removeConference(element.pos)"><mat-icon>remove</mat-icon></a>
+                <a href="javascript:" (click)="editConference(null, element.pos)"><mat-icon>edit</mat-icon> </a>
+            </td>
         </ng-container>
  
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -96,7 +99,7 @@
         </tr>
         <tr>
             <td>
-                <p cla ss="warning" *ngIf="errors[4]">Start time must be before than end time.</p>
+                <p class="warning" *ngIf="errors[4]">Start time must be before than end time.</p>
             </td>   
         </tr>
         <tr>
@@ -130,7 +133,7 @@
                     <mat-option [value]="s" *ngFor="let s of mins">{{ s }}</mat-option>
                 </mat-select>
                 </mat-form-field>
-                <br>
+                <br> 
             </td>
         </tr>
     </table>
@@ -164,6 +167,17 @@
     </table>
     </mat-radio-group>
     <br>
-    <button mat-flat-button color="primary" (click)="newConference()" *ngIf="!edit" [disabled]="flag">Create</button>
-    <button mat-flat-button color="primary" (click)="editConference(index)" *ngIf="edit" [disabled]="flag">Update</button>
+    <button mat-flat-button color="primary" (click)="newConference($event)" *ngIf="!edit" [disabled]="flag">Create</button>
+    <button mat-flat-button color="primary" (click)="editConference($event, index)" *ngIf="edit" [disabled]="flag">Update</button>
+    <button mat-flat-button color="warn" (click)="cancelUpdate($event)" *ngIf="edit" [disabled]="flag">Cancel Update</button>
+</mat-expansion-panel>
+
+<!-- Invitation Form -->
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            <h2>Invitations</h2>
+        </mat-panel-title>        
+    </mat-expansion-panel-header>
+    <app-invitation [data_]="data" (invitees)="saveInvitees($event)"></app-invitation>
 </mat-expansion-panel>
