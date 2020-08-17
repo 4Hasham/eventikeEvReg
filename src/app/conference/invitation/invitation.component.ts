@@ -11,7 +11,7 @@ export class InvitationComponent implements OnInit {
 
   @ViewChild('table', {static: false}) table: MatTable<Element>
   @Input() data_: any[]
-  @Output() invitees = new EventEmitter<Object[]>()
+  @Input() event_id: number;
 
   public counter: number;
   public name: string;
@@ -33,8 +33,8 @@ export class InvitationComponent implements OnInit {
   public index: number;
   public DateTime: string;
   public data = [
-    {event_id: 0, conf_id: 0, invite_id: 0, name: 'Hasham', email: 'hasham@gmail.com', phone: '7654321', role: 'Staff Member', pos: 1, action: "present"},
-    {event_id: 0, conf_id: 0, invite_id: 1, name: 'Gabriel', email: 'gabriel@gmail.com', phone: '1234567', role: 'Organizer', pos: 2, action: "present"}
+    {conf_id: 0, invite_id: 0, name: 'Hasham', email: 'hasham@gmail.com', phone: '7654321', role: 'Staff Member', pos: 1, action: "present"},
+    {conf_id: 0, invite_id: 1, name: 'Gabriel', email: 'gabriel@gmail.com', phone: '1234567', role: 'Organizer', pos: 2, action: "present"}
   ];
   public dataSource = new MatTableDataSource(this.data);
   public displayedColumns = ['name', 'email', 'phone', 'role', 'pos'];
@@ -277,13 +277,22 @@ export class InvitationComponent implements OnInit {
     this.role = data.role;
   }
 
+  sendData = (): void => {
+    let obj = {
+      event_id: this.event_id,
+      invitees: this.data,
+      emailsent: false
+    }
+    ///send data via http.post()
+  }
+
   newInvite = (event: any): void => {
     event.preventDefault();
     let conf = this.currentObj(0);  
     this.data.push(conf);
     this.table.renderRows();
     this.refreshFields();
-    this.invitees.emit(this.data);
+    this.sendData();
   }
 
   editInvite = (event:any, index: number) => {

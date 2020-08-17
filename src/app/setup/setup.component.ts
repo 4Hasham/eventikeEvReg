@@ -11,8 +11,6 @@ export class SetupComponent implements OnInit {
   public setup_id: number;
   @Input() dates: string[];
   @Input() eventID: number;
-  @Output() confs = new EventEmitter<Object[]>();
-  @Output() invitees = new EventEmitter<Object[]>();
 
   constructor() {}
 
@@ -23,13 +21,5 @@ export class SetupComponent implements OnInit {
   onNext = (event: any): void => {
     event.preventDefault();
     this.setup_id++;
-  }
-
-  sendData = (event: any) => {
-    this.confs.emit(event);
-  }
-
-  sendInvites = (event: any) => {
-    this.invitees.emit(event);
   }
 }

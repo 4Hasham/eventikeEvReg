@@ -16,14 +16,12 @@ export class ConferenceComponent implements OnInit {
   
   @ViewChild('table', {static: false}) table: MatTable<Element>
 
-  @Output() confs = new EventEmitter<Object[]>()
-  @Output() invites = new EventEmitter<Object[]>()
   @Input() dates: string[];
   @Input() eventID: number;
 
   public data = [
-    {event_id: this.eventID, id: 0, room: 'Room A', title: 'How to make ice-cream', date: '3/20/2014', start_time: '19:45', end_time: '20:15', pos: 1, desc: 'My example description.', type: 'paid', amount: 420, action: "present"},
-    {event_id: this.eventID, id: 0, room: 'Room A', title: 'How not to make ice-cream', date: '3/22/2014', start_time: '20:30', end_time: '21:15', pos: 2, desc: 'My example desc', type: 'pass', amount: 0, action: "present"}
+    {id: 0, room: 'Room A', title: 'How to make ice-cream', date: '3/20/2014', start_time: '19:45', end_time: '20:15', pos: 1, desc: 'My example description.', type: 'paid', amount: 420, action: "present"},
+    {id: 0, room: 'Room A', title: 'How not to make ice-cream', date: '3/22/2014', start_time: '20:30', end_time: '21:15', pos: 2, desc: 'My example desc', type: 'pass', amount: 0, action: "present"}
   ];
   public dataSource = new MatTableDataSource(this.data);
   public displayedColumns = ['room', 'title', 'date', 'start_time', 'pos'];
@@ -334,8 +332,7 @@ export class ConferenceComponent implements OnInit {
     let m = this.date.getMonth();
     let y = this.date.getFullYear();
     let conf = {
-      event_id: this.eventID,
-      id: 0,
+      id: lastID + 1,
       room: this.name,
       title: this.title,
       date: d + "/" + m + "/" + y,
@@ -378,15 +375,22 @@ export class ConferenceComponent implements OnInit {
     this.date.setFullYear(parseInt(data.date.split('/')[2]));
   }
 
+  sendData = () => {
+    let info = {
+      event_id: this.eventID,
+      data: this.data
+    }
+
+    //post req that I shall write later
+  }
+
   newConference = (event: any): void => {
     event.preventDefault();
-    console.log(this.eventID);
     let conf = this.currentObj(0);  
     this.data.push(conf);
     this.table.renderRows();
     this.refreshFields();
-    this.confs.emit(this.data);
-    this.invites.emit(this.invitees);
+    this.sendData();
   }
 
   editConference = (event: any, index: number) => {
@@ -418,14 +422,9 @@ export class ConferenceComponent implements OnInit {
     this.refreshFields();
     this.index = -1;
   }
-
-  saveInvitees = (event: any) => {
-    this.invitees = event;
-  }
 }
 
 export interface ConferenceElement {
-  event_id: Number,
   id: number,
   room: string,
   title: string,

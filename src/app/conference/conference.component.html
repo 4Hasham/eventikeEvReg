@@ -179,5 +179,5 @@
             <h2>Invitations</h2>
         </mat-panel-title>        
     </mat-expansion-panel-header>
-    <app-invitation [data_]="data" (invitees)="saveInvitees($event)"></app-invitation>
+    <app-invitation [data_]="data" [even_id]="eventID" (invitees)="saveInvitees($event)"></app-invitation>
 </mat-expansion-panel>
