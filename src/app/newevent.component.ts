@@ -156,7 +156,6 @@ export class NewEventComponent implements OnInit {
         }
       }
     }
-    console.log(this.dates, this.datesV);
   }
 
   async sendResult() {
@@ -232,7 +231,6 @@ export class NewEventComponent implements OnInit {
     event.preventDefault();
     this.dateID++;
     this.dates.push('date_' + (this.dateID + 1));
-    console.log(this.dates);
     this.datesF++;
     this.sort();
   }
@@ -240,7 +238,6 @@ export class NewEventComponent implements OnInit {
   pushDateV = (event: string): void => {
     this.sort();
     this.datesV.push(event);
-    console.log(this.datesV);
   }
 
   checkDesc = (event: any) => {

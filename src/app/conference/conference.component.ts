@@ -1,6 +1,7 @@
 import { Component, OnInit, EventEmitter, Input, Output, Inject, ViewChild } from '@angular/core';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatTable } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -21,11 +22,11 @@ export class ConferenceComponent implements OnInit {
   @Input() eventID: number;
 
   public data = [
-    {event_id: this.eventID, id: 0, room: 'Room A', title: 'How to make ice-cream', date: '3/20/2014', time: '19:45 - 20:15', pos: 1, desc: 'My example description.', type: 'paid', amount: 420, action: "present"},
-    {event_id: this.eventID, id: 0, room: 'Room A', title: 'How not to make ice-cream', date: '3/22/2014', time: '20:30 - 21:15', pos: 2, desc: 'My example desc', type: 'pass', amount: 0, action: "present"}
+    {event_id: this.eventID, id: 0, room: 'Room A', title: 'How to make ice-cream', date: '3/20/2014', start_time: '19:45', end_time: '20:15', pos: 1, desc: 'My example description.', type: 'paid', amount: 420, action: "present"},
+    {event_id: this.eventID, id: 0, room: 'Room A', title: 'How not to make ice-cream', date: '3/22/2014', start_time: '20:30', end_time: '21:15', pos: 2, desc: 'My example desc', type: 'pass', amount: 0, action: "present"}
   ];
-  public dataSource = this.data;
-  public displayedColumns = ['room', 'title', 'date', 'time', 'pos'];
+  public dataSource = new MatTableDataSource(this.data);
+  public displayedColumns = ['room', 'title', 'date', 'start_time', 'pos'];
   public name: string;
   public title: string;
   public inter1: number;
@@ -87,6 +88,12 @@ export class ConferenceComponent implements OnInit {
       startWith(''),
       map(value => this._filter(value))
     );
+
+    this.dataSource.filterPredicate = (data, filter: string) => {
+      return data.action == filter;
+    }
+    this.dataSource.filter = "present";
+    //this.table.renderRows();
   }
 
   _filter = (str: string): string[] => {
@@ -306,6 +313,7 @@ export class ConferenceComponent implements OnInit {
     }
     //this.data.splice(t, 1);
     this.data[t].action = "deleted";
+    this.dataSource.filter = "present";
     this.table.renderRows();
   }
 
@@ -326,10 +334,13 @@ export class ConferenceComponent implements OnInit {
     let m = this.date.getMonth();
     let y = this.date.getFullYear();
     let conf = {
+      event_id: this.eventID,
+      id: 0,
       room: this.name,
       title: this.title,
       date: d + "/" + m + "/" + y,
-      time: this.sTimeH + ":" + this.sTimeM + " - " + this.eTimeH + ":" + this.eTimeM,
+      start_time: this.sTimeH + ":" + this.sTimeM,
+      end_time: this.eTimeH + ":" + this.eTimeM,
       pos: lastID + 1,
       desc: this.desc,
       type: this.type,
@@ -357,7 +368,7 @@ export class ConferenceComponent implements OnInit {
     this.title = data.title;
     this.desc = data.desc;
     this.type = data.type;
-    this.amount = data.amount;
+    this.amount = data.amount
     this.sTimeH = parseInt(data.time.split(' - ')[0].split(':')[0]);
     this.sTimeM = parseInt(data.time.split(' - ')[0].split(':')[1]);
     this.eTimeH = parseInt(data.time.split(' - ')[1].split(':')[0]);
@@ -379,7 +390,7 @@ export class ConferenceComponent implements OnInit {
   }
 
   editConference = (event: any, index: number) => {
-    if(this.edit == false && index == -1) {
+    if(this.edit == false && this.index == -1) {
       this.index = index;
       this.loadData(this.data[index - 1]);
       this.edit = true;
@@ -414,10 +425,13 @@ export class ConferenceComponent implements OnInit {
 }
 
 export interface ConferenceElement {
+  event_id: Number,
+  id: number,
   room: string,
   title: string,
   date: string,
-  time: string,
+  start_time: string,
+  end_time: string,
   pos: number,
   desc: string;
   type: string,

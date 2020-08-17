@@ -56,10 +56,6 @@ export class DatesComponent implements OnInit {
     let obj = {
       id: this.id,
       date: this.date.getFullYear() + "-" + this.date.getMonth() + "-" + this.date.getDate(),
-      // startDateH: this.sTimeH,
-      // startDateM: this.sTimeM,
-      // endDateH: this.eTimeH,
-      // endDateM: this.eTimeM,
       start_time: this.sTimeH + ":" + this.sTimeM,
       end_time: this.eTimeH + ":" + this.eTimeM,
       action: this.action
@@ -155,10 +151,6 @@ export class DatesComponent implements OnInit {
     let obj = {
       id: this.id,
       date: this.date.getFullYear() + "-" + this.date.getMonth() + "-" + this.date.getDate(),
-      // startDateH: this.sTimeH,
-      // startDateM: this.sTimeM,
-      // endDateH: this.eTimeH,
-      // endDateM: this.eTimeM,
       start_time: this.sTimeH + ":" + this.sTimeM,
       end_time: this.eTimeH + ":" + this.eTimeM,
       action: this.action
@@ -172,10 +164,6 @@ export class DatesComponent implements OnInit {
       let obj = {
         id: this.id,
         date: event.value.getFullYear() + "-" + event.value.getMonth() + "-" + event.value.getDate(),
-        // startDateH: this.sTimeH,
-        // startDateM: this.sTimeM,
-        // endDateH: this.eTimeH,
-        // endDateM: this.eTimeM,
         start_time: this.sTimeH + ":" + this.sTimeM,
         end_time: this.eTimeH + ":" + this.eTimeM,
         action: this.action

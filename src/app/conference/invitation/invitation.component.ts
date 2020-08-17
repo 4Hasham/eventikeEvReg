@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { MatTable } from '@angular/material/table';
- 
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-invitation',
@@ -33,11 +33,11 @@ export class InvitationComponent implements OnInit {
   public index: number;
   public DateTime: string;
   public data = [
-    {name: 'Hasham', email: 'hasham@gmail.com', phone: '7654321', role: 'Staff Member', action: 1},
-    {name: 'Gabriel', email: 'gabriel@gmail.com', phone: '1234567', role: 'Organizer', action: 2}
+    {event_id: 0, conf_id: 0, invite_id: 0, name: 'Hasham', email: 'hasham@gmail.com', phone: '7654321', role: 'Staff Member', pos: 1, action: "present"},
+    {event_id: 0, conf_id: 0, invite_id: 1, name: 'Gabriel', email: 'gabriel@gmail.com', phone: '1234567', role: 'Organizer', pos: 2, action: "present"}
   ];
-  public dataSource = this.data;
-  public displayedColumns = ['name', 'email', 'phone', 'role', 'action'];
+  public dataSource = new MatTableDataSource(this.data);
+  public displayedColumns = ['name', 'email', 'phone', 'role', 'pos'];
 
   constructor() {}
 
@@ -61,6 +61,11 @@ export class InvitationComponent implements OnInit {
     this.DateTime = "";
     this.role = "";
     setInterval(this.checkFlag, 600);
+
+    this.dataSource.filterPredicate = (data, filter: string) => {
+      return data.action == filter;
+    }
+    this.dataSource.filter = "present";
   }
 
   checkValidityDesc = () => {
@@ -100,8 +105,8 @@ export class InvitationComponent implements OnInit {
 
   returnDateTime = (): void => {
     let date = this.data_[this.id].date;
-    let time = this.data_[this.id].time;
-    let ret = date.split('/')[1] + "-" + date.split('/')[0] + "-" + date.split('/')[2] + ", " + time.split(' - ')[0];
+    let time = this.data_[this.id].start_time + " - " + this.data_[this.id].end_time;
+    let ret = date.split('/')[1] + "-" + date.split('/')[0] + "-" + date.split('/')[2] + ", " + time;
     this.DateTime = ret;
   }
 
@@ -224,12 +229,14 @@ export class InvitationComponent implements OnInit {
   removeInvite = (index: number) => {
     let t = 0;
     for(let i = 0; i < this.data.length; i++) {
-      if(this.data[i].action == index) {
+      if(this.data[i].pos == index) {
         t = i;
         break;
       }
     }
-    this.data.splice(t, 1);
+//  this.data.splice(t, 1);
+    this.data[t].action = "deleted";
+    this.dataSource.filter = "present";
     this.table.renderRows();
   }
 
@@ -238,8 +245,8 @@ export class InvitationComponent implements OnInit {
     if(i == 0) {
       lastID = 0;
       for(let i = 0; i < this.data.length; i++) {
-        if(this.data[i].action > lastID) {
-          lastID = this.data[i].action;
+        if(this.data[i].pos > lastID) {
+          lastID = this.data[i].pos;
         }
       }
     }
@@ -251,7 +258,7 @@ export class InvitationComponent implements OnInit {
       email: this.email,
       phone: this.phone,
       role: this.role,
-      action: lastID + 1
+      pos: lastID + 1
     };
     return invite;
   }
@@ -311,10 +318,13 @@ export class InvitationComponent implements OnInit {
   }
 }
 
-export interface ConferenceElement {
+export interface InviteElement {
+  conf_id: number,
+  invite_id: number,
   name: string,
   email: string,
   phone: number,
   role: string,
+  pos: number,
   action: number
 } 
