@@ -1,7 +1,7 @@
 <br><br>
 <mat-tab-group id="setup_tabs" mat-stretch-tabs backgroundColor="primary" color="primary" [(selectedIndex)]="setup_id">
     <mat-tab label="Conferences">
-        <app-conference [dates]="dates" [eventID]="eventID" (data)="sendData($event)" (invitees)="sendInvites($event)"></app-conference>
+        <app-conference [dates]="dates" [eventID]="eventID"></app-conference>
     </mat-tab>
     <mat-tab label="Booths">
         <!-- Booths -->

@@ -227,13 +227,7 @@ export class InvitationComponent implements OnInit {
   }
 
   removeInvite = (index: number) => {
-    let t = 0;
-    for(let i = 0; i < this.data.length; i++) {
-      if(this.data[i].pos == index) {
-        t = i;
-        break;
-      }
-    }
+    let t = this.data.indexOf(this.data.filter(opt => opt.pos == index && opt.action != "deleted")[0]);
 //  this.data.splice(t, 1);
     this.data[t].action = "deleted";
     this.dataSource.filter = "present";
@@ -254,11 +248,14 @@ export class InvitationComponent implements OnInit {
       lastID = i + 1;
     }
     let invite = {
+      conf_id: 0,
+      invite_id: 0,
       name: this.name,
       email: this.email,
       phone: this.phone,
       role: this.role,
-      pos: lastID + 1
+      pos: lastID + 1,
+      action: 'present'
     };
     return invite;
   }
@@ -290,29 +287,34 @@ export class InvitationComponent implements OnInit {
     event.preventDefault();
     let conf = this.currentObj(0);  
     this.data.push(conf);
+    this.dataSource.filter = "present";
     this.table.renderRows();
     this.refreshFields();
     this.sendData();
   }
 
-  editInvite = (event:any, index: number) => {
+  editInvite = (event:any, index: number, f: boolean) => {
+    if(event) {
+      event.preventDefault();
+    }
     if(this.edit == false && this.index == -1) {
       this.index = index;
-      this.loadData(this.data[index - 1]);
+      this.loadData(this.data.filter(opt => opt.pos == index && opt.action != "deleted")[0]);
       this.edit = true;
-    }
-    else if(this.edit == true && this.index == index) {
-      return true;
     }
     else if(this.edit == true && this.index != index) {
       this.index = index;
-      this.loadData(this.data[index - 1]);
+      this.loadData(this.data.filter(opt => opt.pos == index && opt.action != "deleted")[0]);
+      this.edit = true;
+    }
+    else if(this.edit == true && index == this.index && f == false) {
       this.edit = true;
     }
     else {
-      event.preventDefault();
-      this.loadData(this.data[index - 1]);
-      this.data[index - 1] = this.currentObj(index - 1);
+      console.log(this.data.indexOf(this.data.filter(opt => opt.pos == index)[0]));
+      this.data[this.data.indexOf(this.data.filter(opt => opt.pos == index && opt.action != "deleted")[0])] = this.currentObj(this.data.filter(opt => opt.pos == index && opt.action != "deleted")[0].pos);
+      console.log(this.data.indexOf(this.data.filter(opt => opt.pos == index)[0]));
+      this.dataSource.filter = "present";
       this.table.renderRows();
       this.refreshFields();
       this.edit = false;

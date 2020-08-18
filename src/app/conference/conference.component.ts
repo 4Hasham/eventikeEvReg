@@ -16,7 +16,7 @@ export class ConferenceComponent implements OnInit {
   
   @ViewChild('table', {static: false}) table: MatTable<Element>
 
-  @Input() dates: string[];
+  @Input() dates: Object[];
   @Input() eventID: number;
 
   public data = [
@@ -91,7 +91,6 @@ export class ConferenceComponent implements OnInit {
       return data.action == filter;
     }
     this.dataSource.filter = "present";
-    //this.table.renderRows();
   }
 
   _filter = (str: string): string[] => {
@@ -255,9 +254,9 @@ export class ConferenceComponent implements OnInit {
     const day = (d || new Date());
     if(this.dates.length != 0) {
       for(let i = 0; i < this.dates.length; i++) {
-        let d = parseInt(this.dates[i].split('/')[0]);
-        let m = parseInt(this.dates[i].split('/')[1]);
-        let y = parseInt(this.dates[i].split('/')[2]);
+        let d = parseInt(this.dates[i]['date'].split('-')[2]);
+        let m = parseInt(this.dates[i]['date'].split('-')[1]);
+        let y = parseInt(this.dates[i]['date'].split('-')[0]);
         console.log(this.dates);
         if(y == day.getFullYear()) {
           if(m == day.getMonth()) {
@@ -302,13 +301,7 @@ export class ConferenceComponent implements OnInit {
   }
 
   removeConference = (index: number) => {
-    let t = 0;
-    for(let i = 0; i < this.data.length; i++) {
-      if(this.data[i].pos == index) {
-        t = i;
-        break;
-      }
-    }
+    let t = this.data.indexOf(this.data.filter(opt => opt.pos == index && opt.action != "deleted")[0]);
     //this.data.splice(t, 1);
     this.data[t].action = "deleted";
     this.dataSource.filter = "present";
@@ -326,19 +319,19 @@ export class ConferenceComponent implements OnInit {
       }
     }
     else {
-      lastID = i + 1;
+      lastID = i;
     }
     let d = this.date.getDate();
     let m = this.date.getMonth();
     let y = this.date.getFullYear();
     let conf = {
-      id: lastID + 1,
+      id: 0,
       room: this.name,
       title: this.title,
       date: d + "/" + m + "/" + y,
       start_time: this.sTimeH + ":" + this.sTimeM,
       end_time: this.eTimeH + ":" + this.eTimeM,
-      pos: lastID + 1,
+      pos: lastID,
       desc: this.desc,
       type: this.type,
       amount: this.amount,
@@ -366,10 +359,10 @@ export class ConferenceComponent implements OnInit {
     this.desc = data.desc;
     this.type = data.type;
     this.amount = data.amount
-    this.sTimeH = parseInt(data.time.split(' - ')[0].split(':')[0]);
-    this.sTimeM = parseInt(data.time.split(' - ')[0].split(':')[1]);
-    this.eTimeH = parseInt(data.time.split(' - ')[1].split(':')[0]);
-    this.eTimeM = parseInt(data.time.split(' - ')[1].split(':')[1]);
+    this.sTimeH = parseInt(data.start_time.split(':')[0]);
+    this.sTimeM = parseInt(data.start_time.split(':')[1]);
+    this.eTimeH = parseInt(data.end_time.split(':')[0]);
+    this.eTimeM = parseInt(data.end_time.split(':')[1]);
     this.date.setDate(parseInt(data.date.split('/')[0]));
     this.date.setMonth(parseInt(data.date.split('/')[1]));
     this.date.setFullYear(parseInt(data.date.split('/')[2]));
@@ -388,30 +381,40 @@ export class ConferenceComponent implements OnInit {
     event.preventDefault();
     let conf = this.currentObj(0);  
     this.data.push(conf);
+    this.dataSource.filter = "present";
     this.table.renderRows();
     this.refreshFields();
     this.sendData();
   }
 
-  editConference = (event: any, index: number) => {
+  editConference = (event: any, index: number, f: boolean) => {
+    if(event) {
+      event.preventDefault();
+    }
     if(this.edit == false && this.index == -1) {
       this.index = index;
-      this.loadData(this.data[index - 1]);
+      this.loadData(this.data.filter(opt => opt.pos == index && opt.action != "deleted")[0]);
       this.edit = true;
     }
-    else if(this.edit == true && index == this.index) {
-      return true;
-    } 
     else if(this.edit == true && index != this.index) {
       this.index = index;
-      this.loadData(this.data[index - 1]);
-      return true;
+      this.loadData(this.data.filter(opt => opt.pos == index && opt.action != "deleted")[0]);
+      this.edit = true;
+    }
+    else if(this.edit == false && index == this.index) {
+      this.index = index;
+      this.loadData(this.data.filter(opt => opt.pos == index && opt.action != "deleted")[0]);
+      this.edit =  true;
+    }
+    else if(this.edit == true && index == this.index && f == false) {
+      this.edit = true;
     }
     else {
-      event.preventDefault();
-      this.data[index - 1] = this.currentObj(index - 1);
+      this.data[this.data.indexOf(this.data.filter(opt => opt.pos == index && opt.action != "deleted")[0])] = this.currentObj(this.data.filter(opt => opt.pos == index && opt.action != "deleted")[0].pos);
+      this.dataSource.filter = "present";
       this.table.renderRows();
       this.refreshFields();
+      console.log(this.data);
       this.edit = false;
     }
   }

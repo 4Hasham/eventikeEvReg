@@ -44,7 +44,7 @@
       <th mat-header-cell *matHeaderCellDef> Action </th>
       <td mat-cell *matCellDef="let element">
           <a href="javascript:" (click)="removeInvite(element.pos)"><mat-icon>remove</mat-icon></a>
-          <a href="javascript:" (click)="editInvite(null, element.pos)"><mat-icon>edit</mat-icon> </a>
+          <a href="javascript:" (click)="editInvite(null, element.pos, false)"><mat-icon>edit</mat-icon> </a>
       </td>
   </ng-container>
 
@@ -90,6 +90,6 @@
   </mat-form-field>
   <br>
   <button mat-flat-button color="primary" (click)="newInvite($event)" *ngIf="!edit" [disabled]="flag">Create</button>
-  <button mat-flat-button color="primary" (click)="editInvite($event, index)" *ngIf="edit" [disabled]="flag">Update</button>
+  <button mat-flat-button color="primary" (click)="editInvite($event, index, true)" *ngIf="edit" [disabled]="flag">Update</button>
   <button mat-flat-button color="warn" (click)="cancelUpdate($event)" *ngIf="edit" [disabled]="flag">Cancel Update</button>
 </mat-expansion-panel>
